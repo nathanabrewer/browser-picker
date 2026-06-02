@@ -1,0 +1,12 @@
+# Build output
+build/
+*.dmg
+*.zip
+
+# macOS
+.DS_Store
+
+# Secrets / signing
+*.p12
+*.cer
+*.provisionprofile
