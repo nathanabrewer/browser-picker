@@ -22,6 +22,22 @@ Set Browser Picker as your default browser, and instead of links blindly opening
 
 Builds are signed with a Developer ID and notarized by Apple, so they open without Gatekeeper warnings.
 
+### Verify the download came from this source
+
+Every release `.dmg` is built by [GitHub Actions](.github/workflows/release.yml)
+from a tagged commit and carries a signed [build-provenance
+attestation](https://docs.github.com/actions/security-guides/using-artifact-attestations).
+You can confirm the binary you downloaded was produced by this repo's public
+workflow from a specific commit — not built or swapped out on someone's laptop:
+
+```sh
+gh attestation verify Browser-Picker-1.1.dmg --repo nathanabrewer/browser-picker
+```
+
+Combined with `codesign -dvv` (Developer ID) and `spctl -a -vv` (Apple
+notarization), that gives you a verifiable chain from the source you can read to
+the file you run.
+
 ## Build from source
 
 Requires macOS 13+ and the Xcode command-line tools.
@@ -36,6 +52,22 @@ cp -R "build/Browser Picker.app" /Applications/
 ## How it works
 
 Browser Picker registers as a handler for `http`/`https` URLs. macOS hands it the URL via a `GetURL` Apple Event; it detects installed browsers with `NSWorkspace.urlsForApplications(toOpen:)`, shows the picker, and launches the chosen browser — using `open -na … --profile-directory=…` for Chromium and `-P` for Firefox to target a specific profile.
+
+## Why not the Mac App Store?
+
+Browser Picker's core features — detecting each browser's profiles and launching
+into a specific one — require reading other browsers' profile data (Chrome's
+`Local State`, Firefox's `profiles.ini`) and launching them with custom
+arguments. Both are forbidden under the App Store's mandatory sandbox, which
+jails an app to its own container. A sandboxed build couldn't see your profiles
+or launch them; it would be a strictly worse tool.
+
+So it ships the way utilities like [Velja](https://sindresorhus.com/velja),
+Rectangle, and Hammerspoon do: as a **notarized direct download**, outside the
+store. That unsandboxed access asks for your trust — which is exactly why it's
+**open source**: the code that reads your browser data and routes your links is
+right here for you to read. Nothing leaves your machine; there is no network
+code, no telemetry, no accounts.
 
 ## Project layout
 

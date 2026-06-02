@@ -23,7 +23,9 @@ jobs:
   release:
     runs-on: macos-14
     permissions:
-      contents: write
+      contents: write       # create the Release
+      id-token: write       # sign the provenance attestation
+      attestations: write   # record build provenance for the DMG
     env:
       APP_NAME: "Browser Picker"
     steps:
@@ -95,6 +97,14 @@ jobs:
           hdiutil create -volname "$APP_NAME" -srcfolder "$STAGE" \
             -ov -format UDZO "$DMG"
           echo "DMG_PATH=$DMG" >> "$GITHUB_ENV"
+
+      # Cryptographically tie the DMG to this exact commit + workflow run, so
+      # anyone can verify the download was built from the public source:
+      #   gh attestation verify <dmg> --repo nathanabrewer/browser-picker
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: ${{ env.DMG_PATH }}
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
