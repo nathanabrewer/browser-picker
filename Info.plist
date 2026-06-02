@@ -11,9 +11,9 @@
     <key>CFBundleExecutable</key>
     <string>BrowserPicker</string>
     <key>CFBundleVersion</key>
-    <string>1.1.1</string>
+    <string>1.1.2</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.1.1</string>
+    <string>1.1.2</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleIconFile</key>
@@ -42,7 +42,7 @@
             <key>CFBundleTypeRole</key>
             <string>Viewer</string>
             <key>LSHandlerRank</key>
-            <string>Default</string>
+            <string>Owner</string>
             <key>LSItemContentTypes</key>
             <array>
                 <string>public.html</string>

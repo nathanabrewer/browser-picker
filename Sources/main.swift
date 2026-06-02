@@ -77,6 +77,23 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
 
+        receive(url)
+    }
+
+    // Opening a local document (double-clicking an .html file in Finder, or
+    // `open file.html`) arrives as kAEOpenDocuments — a different Apple Event
+    // than the http/https GetURL above — and is delivered here as file:// URLs.
+    // Without this, the picker never appeared for local HTML files even though
+    // Info.plist advertises support for them.
+    func application(_ application: NSApplication, open urls: [URL]) {
+        for url in urls {
+            receive(url)
+        }
+    }
+
+    /// Shared entry point for every URL we handle, from any source. Buffers
+    /// until the UI is ready (cold-launch race), then shows the picker.
+    private func receive(_ url: URL) {
         hasReceivedURL = true
 
         if isReady {
@@ -310,7 +327,7 @@ struct AboutView: View {
             .buttonStyle(.bordered)
             .controlSize(.large)
 
-            Text("Version 1.1.1")
+            Text("Version 1.1.2")
                 .font(.system(size: 10))
                 .foregroundColor(.secondary.opacity(0.6))
                 .padding(.top, 16)

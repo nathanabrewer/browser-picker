@@ -7,6 +7,7 @@ Set Browser Picker as your default browser, and instead of links blindly opening
 ## Features
 
 - **Per-click browser choice** — a clean popup on every link, dismissable with `Esc`.
+- **Local files too** — opening an `.html` file from Finder routes through the same picker (set Browser Picker as the file's *Open with* default via Get Info → Change All).
 - **Profile-aware** — detects Chrome/Chromium profiles (via `Local State`) and Firefox profiles (via `profiles.ini`), and launches into the exact one.
 - **"Goto" default** — star a browser/profile to pre-select it.
 - **Auto-open mode** — optionally skip the popup and open your starred default instantly; hold <kbd>⌥ Option</kbd> at click time to force the picker back.
