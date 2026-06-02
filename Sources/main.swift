@@ -10,15 +10,23 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var escapeMonitor: Any?
     private var settingsWindow: NSWindow?
 
-    func applicationDidFinishLaunching(_ notification: Notification) {
-        // Register as URL handler
+    func applicationWillFinishLaunching(_ notification: Notification) {
+        // Register the GetURL handler as early as possible. On a cold launch
+        // triggered BY a link, macOS delivers the kAEGetURL Apple Event during
+        // launch — before applicationDidFinishLaunching. Registering here (in
+        // willFinishLaunching) ensures the very first URL isn't dropped, which
+        // previously left the user staring at the About window instead of the
+        // picker. The event still lands in pendingURLs (isReady is false until
+        // didFinishLaunching), where it's drained once the UI is ready.
         NSAppleEventManager.shared().setEventHandler(
             self,
             andSelector: #selector(handleGetURL(_:withReply:)),
             forEventClass: AEEventClass(kInternetEventClass),
             andEventID: AEEventID(kAEGetURL)
         )
+    }
 
+    func applicationDidFinishLaunching(_ notification: Notification) {
         // Install a single Escape key monitor
         escapeMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
             if event.keyCode == 53 { // Escape
@@ -302,7 +310,7 @@ struct AboutView: View {
             .buttonStyle(.bordered)
             .controlSize(.large)
 
-            Text("Version 1.1")
+            Text("Version 1.1.1")
                 .font(.system(size: 10))
                 .foregroundColor(.secondary.opacity(0.6))
                 .padding(.top, 16)
